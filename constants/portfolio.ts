@@ -78,7 +78,7 @@ export const PERSONAL_INFO: PersonalInfo = {
 };
 
 /** File in /public - used in About and metadata where needed. */
-export const PROFILE_IMAGE = "/adhikansh-profile.png";
+export const PROFILE_IMAGE = "/adhikansh.png";
 
 export const MEDIUM_PROFILE = {
   url: "https://medium.com/@adhikanshmittal",
