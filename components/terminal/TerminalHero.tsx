@@ -1,10 +1,9 @@
 import { PERSONAL_INFO } from "@/constants/portfolio";
 import Prompt from "./Prompt";
 
-export default function TerminalHero() {
+export function TerminalHeroBody() {
   return (
-    <div>
-      <Prompt command="whoami" />
+    <>
       <div className="text-[clamp(34px,8vw,84px)] leading-none font-bold tracking-[-0.04em] my-5.5">
         <span className="bg-gradient-to-r from-[#ff6b4a] to-[#a78bff] bg-clip-text text-transparent">
           {PERSONAL_INFO.name.split(" ")[0]}
@@ -38,6 +37,15 @@ export default function TerminalHero() {
           </div>
         ))}
       </div>
+    </>
+  );
+}
+
+export default function TerminalHero() {
+  return (
+    <div>
+      <Prompt command="whoami" />
+      <TerminalHeroBody />
     </div>
   );
 }

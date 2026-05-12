@@ -1,73 +1,101 @@
+import type { ReactNode } from "react";
 import { ABOUT, MEDIUM_PROFILE } from "@/constants/portfolio";
 import Prompt from "./Prompt";
 
-export default function TerminalAbout() {
-  const stackLines = Object.entries(ABOUT.stack).map(([key, value]) => ({
-    key,
-    value,
-    label: key === "comfortZone" ? "comfortZone" : key,
-  }));
+const stackLines = Object.entries(ABOUT.stack).map(([key, value]) => ({
+  key,
+  value,
+  label: key === "comfortZone" ? "comfortZone" : key,
+}));
+
+const prose = "text-[13px] leading-[1.65] text-[#e6e6e0] sm:text-[14px] max-w-[65ch]";
+const muted = "text-[13px] leading-[1.65] text-[#9c9c95] sm:text-[14px] max-w-[65ch]";
+
+function LineRow({ n, children }: { n: number; children: ReactNode }) {
+  return (
+    <div className="grid grid-cols-[2.25rem_minmax(0,1fr)] items-start gap-x-3 py-1 sm:grid-cols-[2.5rem_minmax(0,1fr)] sm:gap-x-4">
+      <span className="select-none pt-0.5 text-right font-mono text-[11px] tabular-nums leading-[1.65] text-[#5b5b56]">
+        {n}
+      </span>
+      <div className="min-w-0">{children}</div>
+    </div>
+  );
+}
+
+export function TerminalAboutBody() {
+  const stackStart = 6 + ABOUT.paragraphs.length;
 
   return (
+    <div className="rounded-lg border border-white/[0.08] bg-white/[0.015] px-4 py-5 sm:px-6 sm:py-6">
+      <LineRow n={1}>
+        <div className="leading-snug">
+          <span className="text-[#a78bff]">#</span> <span className="text-[#ff6b4a]">About</span>
+        </div>
+      </LineRow>
+
+      <LineRow n={2}>
+        <p className={`m-0 ${muted}`}>{ABOUT.headline}</p>
+      </LineRow>
+
+      {ABOUT.paragraphs.map((para, i) => (
+        <LineRow key={i} n={3 + i}>
+          <p className={`m-0 ${prose}`}>{para}</p>
+        </LineRow>
+      ))}
+
+      <LineRow n={3 + ABOUT.paragraphs.length}>
+        <p className="m-0 text-[13px] italic leading-[1.65] text-[#5b5b56] sm:text-[14px] max-w-[65ch]">{ABOUT.personal}</p>
+      </LineRow>
+
+      <LineRow n={4 + ABOUT.paragraphs.length}>
+        <div className="min-w-0">
+          <a
+            href={MEDIUM_PROFILE.url}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-[13px] text-[#a78bff] underline decoration-[#a78bff]/40 underline-offset-2 transition-colors hover:text-[#ff6b4a] hover:decoration-[#ff6b4a]/50 sm:text-[14px]"
+          >
+            {MEDIUM_PROFILE.url.replace("https://", "")}
+          </a>
+          <span className="text-[13px] text-[#5b5b56] sm:text-[14px]"> {"// essays"}</span>
+        </div>
+      </LineRow>
+
+      <div className="pt-4">
+        <LineRow n={5 + ABOUT.paragraphs.length}>
+          <span className="text-[13px] italic text-[#5b5b56] sm:text-[14px]">{"// Stack"}</span>
+        </LineRow>
+      </div>
+
+      {stackLines.map((line, i) => (
+        <div
+          key={line.key}
+          className="grid grid-cols-[2.25rem_6.75rem_minmax(0,1fr)] items-start gap-x-3 py-1 sm:grid-cols-[2.5rem_7.5rem_minmax(0,1fr)] sm:gap-x-4"
+        >
+          <span className="select-none pt-0.5 text-right font-mono text-[11px] tabular-nums leading-[1.65] text-[#5b5b56]">
+            {stackStart + i}
+          </span>
+          <span className="break-words pt-0.5 text-right font-mono text-[12px] leading-[1.65] text-[#ffb454] sm:text-[13px]">
+            {line.label}:
+          </span>
+          <span className={`min-w-0 break-words ${prose}`}>{line.value}</span>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+export default function TerminalAbout() {
+  return (
     <div className="mt-11">
-      <div className="flex items-center gap-3 my-4.5 text-[11px] uppercase tracking-[0.14em] text-[#5b5b56]">
-        <div className="flex-1 h-px bg-white/[0.08]" />
+      <div className="my-4.5 flex items-center gap-3 text-[11px] uppercase tracking-[0.14em] text-[#5b5b56]">
+        <div className="h-px flex-1 bg-white/[0.08]" />
         <span className="text-[#ff6b4a]">01</span> About
-        <div className="flex-1 h-px bg-white/[0.08]" />
+        <div className="h-px flex-1 bg-white/[0.08]" />
       </div>
 
       <Prompt command="cat about.md" />
-      <div className="border border-white/[0.08] rounded-lg px-5 py-4.5 bg-white/[0.015] space-y-3">
-        <div className="flex gap-2.5 items-baseline py-[3px] text-[#9c9c95]">
-          <span className="text-[#5b5b56] w-6 text-right select-none">1</span>
-          <div>
-            <span className="text-[#a78bff]">#</span> <span className="text-[#ff6b4a]">About</span>
-          </div>
-        </div>
-        <div className="flex gap-2.5 items-baseline py-[3px] text-[#9c9c95]">
-          <span className="text-[#5b5b56] w-6 text-right select-none">2</span>
-          <div className="text-[#9c9c95]">{ABOUT.headline}</div>
-        </div>
-        {ABOUT.paragraphs.map((para, i) => (
-          <div key={i} className="flex gap-2.5 items-baseline py-[3px] text-[#9c9c95]">
-            <span className="text-[#5b5b56] w-6 text-right select-none">{3 + i}</span>
-            <div className="text-[#e6e6e0]">{para}</div>
-          </div>
-        ))}
-        <div className="flex gap-2.5 items-baseline py-[3px] text-[#9c9c95]">
-          <span className="text-[#5b5b56] w-6 text-right select-none">{3 + ABOUT.paragraphs.length}</span>
-          <div className="text-[#5b5b56] italic">{ABOUT.personal}</div>
-        </div>
-        <div className="flex gap-2.5 items-baseline py-[3px] text-[#9c9c95]">
-          <span className="text-[#5b5b56] w-6 text-right select-none">{4 + ABOUT.paragraphs.length}</span>
-          <div>
-            <a
-              href={MEDIUM_PROFILE.url}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-[#a78bff] underline hover:text-[#ff6b4a]"
-            >
-              {MEDIUM_PROFILE.url.replace("https://", "")}
-            </a>
-            <span className="text-[#5b5b56]"> {"// essays"}</span>
-          </div>
-        </div>
-        <div className="flex gap-2.5 items-baseline py-[3px] text-[#9c9c95]">
-          <span className="text-[#5b5b56] w-6 text-right select-none">{5 + ABOUT.paragraphs.length}</span>
-          <div>
-            <span className="text-[#5b5b56] italic">{"// Stack"}</span>
-          </div>
-        </div>
-        {stackLines.map((line, i) => (
-          <div key={line.key} className="flex gap-2.5 items-baseline py-[3px] text-[#9c9c95]">
-            <span className="text-[#5b5b56] w-6 text-right select-none">{6 + ABOUT.paragraphs.length + i}</span>
-            <div>
-              <span className="text-[#ffb454]">{line.label}</span>
-              <span className="text-[#5b5b56]">:</span> <span className="text-[#e6e6e0]">{line.value}</span>
-            </div>
-          </div>
-        ))}
-      </div>
+      <TerminalAboutBody />
     </div>
   );
 }

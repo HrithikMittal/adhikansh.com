@@ -10,7 +10,13 @@ function PortfolioContent() {
   const { mode } = useMode();
 
   return (
-    <div className="pb-[calc(7rem+env(safe-area-inset-bottom,0px))] sm:pb-[calc(7.5rem+env(safe-area-inset-bottom,0px))]">
+    <div
+      className={
+        mode === "dev"
+          ? "flex h-[100dvh] flex-col overflow-hidden"
+          : "pb-[calc(7rem+env(safe-area-inset-bottom,0px))] sm:pb-[calc(7.5rem+env(safe-area-inset-bottom,0px))]"
+      }
+    >
       {mode === "human" && <SwissMode />}
       {mode === "dev" && <TerminalMode />}
       {mode === "agent" && <AgentMode />}
