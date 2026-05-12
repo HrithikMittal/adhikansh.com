@@ -8,8 +8,26 @@ import { TerminalLabBody } from "./TerminalLab";
 import { TerminalWritingArchiveOnly } from "./TerminalWriting";
 import { TerminalContactBody } from "./TerminalContact";
 import TerminalStatusBar from "./TerminalStatusBar";
+import { PacManGame, type PacManExitPayload } from "./PacManGame";
+import { PacManFrozen } from "./PacManFrozen";
 
 type HistoryEntry = { id: string; command: string; output: ReactNode };
+
+function PacGameHistorySummary({ payload }: { payload: PacManExitPayload }) {
+  return (
+    <div className="space-y-2">
+      <p className="m-0 font-mono text-[12px] leading-relaxed text-[#9c9c95]">
+        Session ended — score <span className="text-[#ffe24a]">{payload.score}</span>, lives{" "}
+        <span className="text-[#5be3a3]">{payload.lives}</span>, dots left{" "}
+        <span className="text-[#e6e6e0]">{payload.dotsRemaining}</span>. Maze{" "}
+        <span className="text-[#e6e6e0]">{payload.mazeName}</span> · tick{" "}
+        <span className="text-[#e6e6e0]">{payload.tickMs}ms</span>
+      </p>
+      <PacManFrozen snapshot={payload.snapshot} cell={12} />
+      <p className="m-0 font-mono text-[10px] text-[#5b5b56]">Board frozen when you left the game.</p>
+    </div>
+  );
+}
 
 function HistoryCommandLine({ command }: { command: string }) {
   return (
@@ -33,6 +51,7 @@ const HELP_OUTPUT = (
   lab         ideas & experiments (alias: ideas)
   writing     Medium archive only
   contact     email & social (aliases: ping, mail)
+  game        fullscreen Pac-Man; exit saves the board to scrollback (alias: play)
   help        this list (aliases: ?, h)
   clear       clear the screen`}
   </pre>
@@ -51,6 +70,7 @@ function normalizeCommand(raw: string): string {
     ideas: "lab",
     ping: "contact",
     mail: "contact",
+    play: "game",
   };
 
   if (aliases[first]) return aliases[first];
@@ -94,6 +114,7 @@ function renderOutput(raw: string): ReactNode {
 
 export default function TerminalShell() {
   const uid = useId();
+  const [gameOpen, setGameOpen] = useState(false);
   const [history, setHistory] = useState<HistoryEntry[]>(() => [
     {
       id: `${uid}-init`,
@@ -104,6 +125,23 @@ export default function TerminalShell() {
   const [line, setLine] = useState("");
   const scrollRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+  const preGameHistoryRef = useRef<HistoryEntry[]>([]);
+
+  const finishGame = useCallback(
+    (payload: PacManExitPayload) => {
+      setGameOpen(false);
+      setHistory([
+        ...preGameHistoryRef.current,
+        {
+          id: `${uid}-game-${Date.now()}`,
+          command: "game",
+          output: <PacGameHistorySummary payload={payload} />,
+        },
+      ]);
+      queueMicrotask(() => inputRef.current?.focus());
+    },
+    [uid],
+  );
 
   const scrollToBottom = useCallback(() => {
     const el = scrollRef.current;
@@ -114,7 +152,7 @@ export default function TerminalShell() {
 
   useEffect(() => {
     scrollToBottom();
-  }, [history, scrollToBottom]);
+  }, [history, scrollToBottom, gameOpen]);
 
   useEffect(() => {
     inputRef.current?.focus();
@@ -130,8 +168,16 @@ export default function TerminalShell() {
 
       const cmdKey = normalizeCommand(trimmed);
       if (cmdKey === "clear") {
+        if (gameOpen) setGameOpen(false);
         setHistory([]);
         queueMicrotask(() => inputRef.current?.focus());
+        return;
+      }
+
+      if (cmdKey === "game") {
+        preGameHistoryRef.current = history;
+        setHistory([]);
+        setGameOpen(true);
         return;
       }
 
@@ -146,51 +192,59 @@ export default function TerminalShell() {
       ]);
       queueMicrotask(() => inputRef.current?.focus());
     },
-    [line, uid],
+    [line, uid, gameOpen],
   );
 
   return (
     <div className="flex min-h-0 flex-1 flex-col">
-      <div
-        ref={scrollRef}
-        className="min-h-0 flex-1 overflow-y-auto overflow-x-hidden pr-1 text-[13px] leading-relaxed [scrollbar-color:rgba(255,255,255,0.12)_transparent]"
-      >
-        {history.map((entry) => (
-          <div key={entry.id} className="mb-4 last:mb-0">
-            <HistoryCommandLine command={entry.command} />
-            {entry.output ? <div className="border-l border-white/[0.08] pl-3.5 pt-2">{entry.output}</div> : null}
-          </div>
-        ))}
-      </div>
-
-      <form
-        onSubmit={submit}
-        className="mt-3 shrink-0 border-t border-white/[0.08] bg-black/20 px-1 py-3 sm:px-0"
-      >
-        <label htmlFor="terminal-shell-input" className="sr-only">
-          Terminal command
-        </label>
-        <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-[13px]">
-          <span className="select-none text-[#5be3a3]">adhi</span>
-          <span className="select-none text-[#5b5b56]">@</span>
-          <span className="select-none text-[#a78bff]">coral</span>
-          <span className="select-none text-[#ff6b4a]">~</span>
-          <span className="select-none text-[#5b5b56]">$</span>
-          <input
-            id="terminal-shell-input"
-            ref={inputRef}
-            type="text"
-            value={line}
-            onChange={(e) => setLine(e.target.value)}
-            autoCapitalize="none"
-            autoComplete="off"
-            autoCorrect="off"
-            spellCheck={false}
-            className="min-w-0 flex-1 bg-transparent font-mono text-[13px] text-[#e6e6e0] outline-none placeholder:text-[#5b5b56] sm:min-w-[12rem]"
-            placeholder="type a command…"
-          />
+      {gameOpen ? (
+        <div className="flex min-h-0 flex-1 flex-col overflow-hidden">
+          <PacManGame fullTerminal defaultTickMs={340} onExit={finishGame} />
         </div>
-      </form>
+      ) : (
+        <>
+          <div
+            ref={scrollRef}
+            className="min-h-0 flex-1 overflow-y-auto overflow-x-hidden pr-1 text-[13px] leading-relaxed [scrollbar-color:rgba(255,255,255,0.12)_transparent]"
+          >
+            {history.map((entry) => (
+              <div key={entry.id} className="mb-4 last:mb-0">
+                <HistoryCommandLine command={entry.command} />
+                {entry.output ? <div className="border-l border-white/[0.08] pl-3.5 pt-2">{entry.output}</div> : null}
+              </div>
+            ))}
+          </div>
+
+          <form
+            onSubmit={submit}
+            className="mt-3 shrink-0 border-t border-white/[0.08] bg-black/20 px-1 py-3 sm:px-0"
+          >
+            <label htmlFor="terminal-shell-input" className="sr-only">
+              Terminal command
+            </label>
+            <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-[13px]">
+              <span className="select-none text-[#5be3a3]">adhi</span>
+              <span className="select-none text-[#5b5b56]">@</span>
+              <span className="select-none text-[#a78bff]">coral</span>
+              <span className="select-none text-[#ff6b4a]">~</span>
+              <span className="select-none text-[#5b5b56]">$</span>
+              <input
+                id="terminal-shell-input"
+                ref={inputRef}
+                type="text"
+                value={line}
+                onChange={(e) => setLine(e.target.value)}
+                autoCapitalize="none"
+                autoComplete="off"
+                autoCorrect="off"
+                spellCheck={false}
+                className="min-w-0 flex-1 bg-transparent font-mono text-[13px] text-[#e6e6e0] outline-none placeholder:text-[#5b5b56] sm:min-w-[12rem]"
+                placeholder="type a command…"
+              />
+            </div>
+          </form>
+        </>
+      )}
 
       <div className="mt-2 shrink-0">
         <TerminalStatusBar />

@@ -106,7 +106,7 @@ export const ABOUT = {
   personal:
     "Away from the keyboard: chess, PS5, cricket and football, painting, bartending, gardening - and a cat named Chillu.",
   stack: {
-    stack: "TypeScript · Python · Postgres",
+    stack: "Next.js · MongoDB · Go",
     ai: "Voice · Agents · RAG · Evals",
     cloud: "AWS · Cloudflare · Vercel",
     comfortZone: "First 10 schools · 0 → 1",
