@@ -68,7 +68,7 @@ export const PERSONAL_INFO: PersonalInfo = {
   name: "Adhikansh Mittal",
   primaryRole: "Co-Founder & CTO, Coraltalk",
   tagline:
-    "Most of my time goes to Coraltalk - AI-powered spoken assessment used by 10+ schools. I still write code, ship releases, and answer support threads when it matters.",
+    "Founder-engineer for AI-native products. I still own the path from idea to deploy — and the thread when a customer says it's wrong.",
   location: "Bengaluru, IN",
   status: "Coraltalk in market",
   email: "hi@adhikansh.com",
@@ -272,14 +272,14 @@ export const SOCIAL_LINKS: SocialLink[] = [
 ];
 
 export const TICKER_ITEMS = [
-  "Coraltalk",
-  "10+ schools",
-  "Spoken assessment",
-  "Staymod",
-  "Eatmod",
-  "Chess",
-  "Chillu",
-  "Shipping",
+  "💬 Coraltalk",
+  "🏫 10+ schools",
+  "🗣️ Spoken assessment",
+  "🏨 Staymod",
+  "🍔 Eatmod",
+  "♟️ Chess",
+  "🐈 Chillu",
+  "📦 Shipping",
 ];
 
 export const TERMINAL_TAGLINE = "BOLD · CONFIDENT · SHIPPING";
