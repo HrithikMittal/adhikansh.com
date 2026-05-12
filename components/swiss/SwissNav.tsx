@@ -8,7 +8,9 @@ export default function SwissNav() {
   const { theme, setTheme } = useTheme();
 
   const navLinks = [
+    { label: "About", href: "#about" },
     { label: "Work", href: "#work" },
+    { label: "Lab", href: "#lab" },
     { label: "Writing", href: "#writing" },
     { label: "Contact", href: "#contact" },
   ];

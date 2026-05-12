@@ -23,56 +23,58 @@ export default function SwissHero() {
   const { line1, line2 } = splitDisplayName(PERSONAL_INFO.name);
 
   return (
-    <section className="border-b border-[var(--line)] bg-[var(--bg)]">
-      <div className="pt-14 pb-0 sm:pt-16 md:pt-20 lg:pt-24">
-        {/* Same grid as SwissAbout: 200px label rail + 1fr body so columns line up */}
-        <div className="grid grid-cols-[200px_1fr] gap-10 items-start max-[820px]:grid-cols-1 max-[820px]:gap-[18px]">
-          {/* Left rail — metadata (About uses § 01 / label here) */}
-          <aside className="flex flex-row max-[820px]:justify-between sm:max-[820px]:justify-start gap-8 sm:gap-12 min-[821px]:flex-col min-[821px]:gap-7">
-            {META.map(({ label, value }) => (
-              <div key={label} className="flex flex-col gap-1.5 min-w-0">
-                <span className="font-mono text-[10px] uppercase tracking-[0.16em] text-neutral-400 dark:text-neutral-500">
-                  {label}
-                </span>
-                <span className="font-mono text-[11px] sm:text-xs text-[var(--fg)] tabular-nums">
-                  {value}
-                </span>
+    <section className="group relative flex h-[100dvh] min-h-0 flex-col overflow-x-hidden border-b border-[var(--line)] bg-[var(--bg)]">
+      {/* Bottom padding clears fixed ModeSwitcher + safe area so marquee stays visible */}
+      <div className="relative flex min-h-0 flex-1 flex-col pt-14 pb-[calc(6.5rem+env(safe-area-inset-bottom,0px))] sm:pt-16 sm:pb-[calc(7rem+env(safe-area-inset-bottom,0px))] md:pt-20 lg:pt-24">
+        <div className="flex min-h-0 flex-1 flex-col justify-center overflow-y-auto overflow-x-hidden">
+          {/* Same grid as SwissAbout: 200px label rail + 1fr body so columns line up */}
+          <div className="grid grid-cols-[200px_1fr] gap-10 items-start max-[820px]:grid-cols-1 max-[820px]:gap-[18px]">
+            {/* Left rail — metadata (About uses § 01 / label here) */}
+            <aside className="flex flex-row max-[820px]:justify-between sm:max-[820px]:justify-start gap-8 sm:gap-12 min-[821px]:flex-col min-[821px]:gap-7">
+              {META.map(({ label, value }) => (
+                <div key={label} className="flex flex-col gap-1.5 min-w-0">
+                  <span className="font-mono text-[10px] uppercase tracking-[0.16em] text-neutral-400 dark:text-neutral-500">
+                    {label}
+                  </span>
+                  <span className="font-mono text-[11px] sm:text-xs text-[var(--fg)] tabular-nums">
+                    {value}
+                  </span>
+                </div>
+              ))}
+            </aside>
+
+            {/* Right column — same rail + max width as SwissAbout */}
+            <div className="m-0 max-w-[720px] flex flex-col items-start">
+              <h1 className="text-[clamp(2.75rem,9vw,5.5rem)] font-bold tracking-[-0.045em] leading-[0.9] text-[var(--fg)] mb-6 md:mb-7">
+                {line1}
+                {line2 ? (
+                  <>
+                    <br />
+                    {line2}
+                  </>
+                ) : null}
+              </h1>
+
+              <p className="font-mono text-[11px] sm:text-xs uppercase tracking-[0.12em] text-[var(--muted)] mb-2">
+                {PERSONAL_INFO.primaryRole}
+              </p>
+              <p className="text-lg sm:text-xl leading-snug text-[var(--fg)] max-w-xl tracking-[-0.01em] mb-3.5 md:mb-4">
+                {PERSONAL_INFO.tagline}
+              </p>
+
+              <div className="inline-flex items-center gap-2 rounded-full border border-emerald-200 bg-emerald-50 px-3 py-1.5 font-mono text-[10px] tracking-wide text-emerald-900 dark:border-emerald-500/30 dark:bg-emerald-500/10 dark:text-emerald-200">
+                <span
+                  className="size-1.5 shrink-0 rounded-full bg-emerald-500 animate-pulse-dot"
+                  aria-hidden
+                />
+                {PERSONAL_INFO.status}
               </div>
-            ))}
-          </aside>
-
-          {/* Right column — same rail + max width as SwissAbout */}
-          <div className="m-0 max-w-[720px] flex flex-col items-start">
-            <h1 className="text-[clamp(2.75rem,9vw,5.5rem)] font-bold tracking-[-0.045em] leading-[0.9] text-[var(--fg)] mb-6 md:mb-7">
-              {line1}
-              {line2 ? (
-                <>
-                  <br />
-                  {line2}
-                </>
-              ) : null}
-            </h1>
-
-            <p className="text-lg sm:text-xl leading-snug text-[var(--fg)] max-w-xl tracking-[-0.01em] mb-3.5 md:mb-4">
-              Technical founder building{" "}
-              <em className="font-[family-name:var(--font-newsreader)] italic">AI products</em>{" "}
-              from{" "}
-              <span className="font-mono text-[0.95em] tracking-tight">0 → 1</span>. I write code,
-              ship features, and answer support tickets — usually the same week.
-            </p>
-
-            <div className="inline-flex items-center gap-2 rounded-full border border-neutral-200/90 bg-emerald-50/90 px-3 py-1.5 font-mono text-[10px] tracking-wide text-neutral-800 dark:border-[var(--line)] dark:bg-emerald-950/25 dark:text-neutral-400">
-              <span
-                className="size-1.5 shrink-0 rounded-full bg-emerald-500 animate-pulse-dot"
-                aria-hidden
-              />
-              {PERSONAL_INFO.status}
             </div>
           </div>
         </div>
 
         {/* Bottom ticker */}
-        <div className="mt-16 sm:mt-20 md:mt-24 border-y border-neutral-200/90 dark:border-[var(--line)] py-4 overflow-hidden [mask-image:linear-gradient(to_right,transparent,black_6%,black_94%,transparent)]">
+        <div className="mt-6 shrink-0 border-y border-neutral-200/90 dark:border-[var(--line)] py-4 overflow-hidden [mask-image:linear-gradient(to_right,transparent,black_6%,black_94%,transparent)] sm:mt-8">
           <div className="flex w-max animate-scroll gap-5 sm:gap-6 items-center">
             {[0, 1, 2].map((copy) => (
               <span
@@ -94,6 +96,16 @@ export default function SwissHero() {
           </div>
         </div>
       </div>
+
+      <a
+        href="#about"
+        aria-label="Scroll to About"
+        className="pointer-events-none absolute bottom-[calc(10.5rem+env(safe-area-inset-bottom,0px))] left-1/2 z-10 flex h-11 w-11 -translate-x-1/2 translate-y-2 items-center justify-center rounded-full border border-[var(--line)] bg-[var(--bg)]/90 text-[var(--muted)] opacity-0 shadow-sm backdrop-blur-md transition-[opacity,transform] duration-300 ease-out hover:border-[var(--line-strong)] hover:text-[var(--fg)] group-hover:pointer-events-auto group-hover:translate-y-0 group-hover:opacity-100 focus-visible:pointer-events-auto focus-visible:translate-y-0 focus-visible:opacity-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent)] motion-reduce:translate-y-0 motion-reduce:transition-opacity sm:bottom-[calc(11rem+env(safe-area-inset-bottom,0px))]"
+      >
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+          <path d="m6 9 6 6 6-6" />
+        </svg>
+      </a>
     </section>
   );
 }

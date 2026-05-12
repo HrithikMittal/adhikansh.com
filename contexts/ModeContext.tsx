@@ -16,15 +16,14 @@ export function ModeProvider({ children }: { children: ReactNode }) {
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
-    setMounted(true);
-    // Read from localStorage
-    const stored = localStorage.getItem("portfolio_mode") as PortfolioMode;
-    // Read from URL
-    const params = new URLSearchParams(window.location.search);
-    const urlMode = params.get("mode") as PortfolioMode;
-
-    const initialMode = urlMode || stored || "human";
-    setModeState(initialMode);
+    queueMicrotask(() => {
+      setMounted(true);
+      const stored = localStorage.getItem("portfolio_mode") as PortfolioMode;
+      const params = new URLSearchParams(window.location.search);
+      const urlMode = params.get("mode") as PortfolioMode;
+      const initialMode = urlMode || stored || "human";
+      setModeState(initialMode);
+    });
   }, []);
 
   const setMode = (newMode: PortfolioMode) => {

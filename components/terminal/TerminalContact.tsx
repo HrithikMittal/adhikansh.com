@@ -6,7 +6,7 @@ export default function TerminalContact() {
     <div className="mt-11">
       <div className="flex items-center gap-3 my-4.5 text-[11px] uppercase tracking-[0.14em] text-[#5b5b56]">
         <div className="flex-1 h-px bg-white/[0.08]" />
-        <span className="text-[#ff6b4a]">04</span> Contact
+        <span className="text-[#ff6b4a]">05</span> Contact
         <div className="flex-1 h-px bg-white/[0.08]" />
       </div>
 

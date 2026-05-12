@@ -4,6 +4,7 @@ import SwissNav from "./SwissNav";
 import SwissHero from "./SwissHero";
 import SwissAbout from "./SwissAbout";
 import SwissProjects from "./SwissProjects";
+import SwissLab from "./SwissLab";
 import SwissWriting from "./SwissWriting";
 import SwissContact from "./SwissContact";
 import SwissFooter from "./SwissFooter";
@@ -16,6 +17,7 @@ export default function SwissMode() {
         <SwissHero />
         <SwissAbout />
         <SwissProjects />
+        <SwissLab />
         <SwissWriting />
         <SwissContact />
       </main>

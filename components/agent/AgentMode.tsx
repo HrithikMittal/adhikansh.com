@@ -1,19 +1,31 @@
-import { PERSONAL_INFO, PROJECTS, ESSAYS, SOCIAL_LINKS, ABOUT } from "@/constants/portfolio";
+import {
+  PERSONAL_INFO,
+  PROJECTS_ORDERED,
+  MEDIUM_ARTICLES,
+  MEDIUM_PROFILE,
+  SOCIAL_LINKS,
+  ABOUT,
+  LAB_IDEAS,
+  LINKEDIN_POSTS,
+  NOW,
+  WRITING_SECTION,
+} from "@/constants/portfolio";
 
 export default function AgentMode() {
-  // Structured data for SEO/LLMs  - all content is from safe constants
+  const sameAs = SOCIAL_LINKS.filter((l) => l.url.startsWith("http")).map((l) => l.url);
+
   const structuredData = {
     "@context": "https://schema.org",
     "@type": "Person",
     name: PERSONAL_INFO.name,
-    jobTitle: "Technical Founder",
-    description: PERSONAL_INFO.tagline,
+    jobTitle: PERSONAL_INFO.primaryRole,
+    description: `${PERSONAL_INFO.tagline} ${ABOUT.headline}`,
     email: PERSONAL_INFO.email,
     address: {
       "@type": "PostalAddress",
       addressLocality: PERSONAL_INFO.location,
     },
-    sameAs: SOCIAL_LINKS.map((l) => l.url),
+    sameAs,
   };
 
   return (
@@ -29,6 +41,7 @@ export default function AgentMode() {
       {/* Header */}
       <header className="mb-12 pb-8 border-b-2 border-black">
         <h1 className="text-4xl font-bold mb-2">{PERSONAL_INFO.name}</h1>
+        <p className="text-sm font-bold mb-1">{PERSONAL_INFO.primaryRole}</p>
         <p className="text-lg mb-4">{PERSONAL_INFO.tagline}</p>
         <dl className="grid grid-cols-2 gap-x-8 gap-y-2 text-sm">
           <div>
@@ -57,14 +70,27 @@ export default function AgentMode() {
         {ABOUT.paragraphs.map((para, i) => (
           <p key={i} className="mb-4 leading-relaxed">{para}</p>
         ))}
-        <h3 className="text-xl font-bold mb-2">Technical Stack</h3>
+        <p className="mb-4 leading-relaxed text-gray-700">{ABOUT.personal}</p>
+        <h3 className="text-xl font-bold mb-2">Technical stack</h3>
         <dl className="space-y-2">
-          {Object.entries(ABOUT.stack).map(([key, value]) => (
-            <div key={key}>
-              <dt className="font-bold capitalize">{key === "comfortZone" ? "Comfort Zone" : key}:</dt>
-              <dd className="ml-4">{value}</dd>
-            </div>
-          ))}
+          {Object.entries(ABOUT.stack).map(([key, value]) => {
+            const label =
+              key === "comfortZone"
+                ? "Comfort zone"
+                : key === "ai"
+                  ? "AI"
+                  : key === "stack"
+                    ? "Stack"
+                    : key === "cloud"
+                      ? "Cloud"
+                      : key;
+            return (
+              <div key={key}>
+                <dt className="font-bold">{label}:</dt>
+                <dd className="ml-4">{value}</dd>
+              </div>
+            );
+          })}
         </dl>
       </section>
 
@@ -72,13 +98,28 @@ export default function AgentMode() {
       <section className="mb-12">
         <h2 className="text-2xl font-bold mb-4 pb-2 border-b border-black">Projects</h2>
         <ul className="space-y-6">
-          {PROJECTS.map((project) => (
+          {PROJECTS_ORDERED.map((project) => (
             <li key={project.id} className="border-l-4 border-black pl-4">
               <h3 className="text-xl font-bold">{project.name}</h3>
               <p className="text-sm text-gray-600 mb-2">
-                {project.role} · {project.year}
+                {project.role} · {project.year} · {project.tier === "flagship" ? "Primary" : "Side project"}
               </p>
               <p className="mb-2">{project.description}</p>
+              {project.proofLinks && project.proofLinks.length > 0 ? (
+                <ul className="mb-2 list-disc pl-5 text-sm">
+                  {project.proofLinks.map((pl) => (
+                    <li key={pl.label}>
+                      {pl.url ? (
+                        <a href={pl.url} target="_blank" rel="noopener noreferrer" className="underline">
+                          {pl.label}
+                        </a>
+                      ) : (
+                        pl.label
+                      )}
+                    </li>
+                  ))}
+                </ul>
+              ) : null}
               <a
                 href={project.url}
                 target="_blank"
@@ -92,22 +133,72 @@ export default function AgentMode() {
         </ul>
       </section>
 
-      {/* Writing */}
       <section className="mb-12">
-        <h2 className="text-2xl font-bold mb-4 pb-2 border-b border-black">Writing</h2>
-        <ul className="space-y-3">
-          {ESSAYS.map((essay) => (
-            <li key={essay.slug}>
-              <div className="flex justify-between items-baseline mb-1">
-                <strong>{essay.title}</strong>
-                <span className="text-sm text-gray-600">
-                  {essay.date} · {essay.readTime}
-                </span>
-              </div>
-              <p className="text-sm text-gray-600">{essay.subtitle}</p>
+        <h2 className="text-2xl font-bold mb-4 pb-2 border-b border-black">Lab (exploring)</h2>
+        <p className="text-sm text-gray-600 mb-4">Ideas not yet shipped; working titles only.</p>
+        <ul className="space-y-4">
+          {LAB_IDEAS.map((idea) => (
+            <li key={idea.id}>
+              <strong>{idea.workingTitle}</strong>
+              <p className="text-sm mt-1">{idea.description}</p>
             </li>
           ))}
         </ul>
+      </section>
+
+      <section className="mb-12">
+        <h2 className="text-2xl font-bold mb-4 pb-2 border-b border-black">Publishing</h2>
+        <p className="mb-2 leading-relaxed text-sm">
+          {WRITING_SECTION.headlineBefore}
+          <em>{WRITING_SECTION.headlineEm}</em>
+          {WRITING_SECTION.headlineAfter}
+        </p>
+        <p className="mb-3 leading-relaxed">{NOW.headline}</p>
+        <p className="mb-2 flex flex-wrap gap-x-6 gap-y-1">
+          <a href={NOW.ctaUrl} target="_blank" rel="noopener noreferrer" className="underline">
+            {NOW.ctaLabel}
+          </a>
+          <a href={MEDIUM_PROFILE.url} target="_blank" rel="noopener noreferrer" className="underline">
+            Medium ({MEDIUM_PROFILE.handle})
+          </a>
+        </p>
+        <p className="mb-4 text-sm text-gray-600">{WRITING_SECTION.mediumBlurb}</p>
+        {LINKEDIN_POSTS.length > 0 ? (
+          <>
+            <h3 className="text-lg font-bold mb-2">LinkedIn highlights</h3>
+            <ul className="space-y-3 mb-6">
+              {LINKEDIN_POSTS.map((post) => (
+                <li key={post.url}>
+                  <a href={post.url} target="_blank" rel="noopener noreferrer" className="underline">
+                    {post.title}
+                  </a>
+                  <span className="text-sm text-gray-600"> — {post.date}</span>
+                </li>
+              ))}
+            </ul>
+          </>
+        ) : (
+          <p className="mb-6 text-sm text-gray-600">{WRITING_SECTION.highlightsEmpty}</p>
+        )}
+        {MEDIUM_ARTICLES.length > 0 ? (
+          <>
+            <h3 className="text-lg font-bold mb-2">{WRITING_SECTION.archiveLabel}</h3>
+            <ul className="space-y-4">
+              {MEDIUM_ARTICLES.map((article) => (
+                <li key={article.id}>
+                  <a href={article.url} target="_blank" rel="noopener noreferrer" className="underline font-semibold">
+                    {article.title}
+                  </a>
+                  <span className="text-sm text-gray-600">
+                    {" "}
+                    — {article.date} · {article.readTime}
+                  </span>
+                  <p className="text-sm text-gray-600 mt-1">{article.subtitle}</p>
+                </li>
+              ))}
+            </ul>
+          </>
+        ) : null}
       </section>
 
       {/* Contact */}
@@ -115,13 +206,13 @@ export default function AgentMode() {
         <h2 className="text-2xl font-bold mb-4 pb-2 border-b border-black">Contact</h2>
         <ul className="space-y-2">
           {SOCIAL_LINKS.map((link) => (
-            <li key={link.platform} className="flex justify-between">
-              <span className="font-bold">{link.platform}:</span>
+            <li key={link.platform} className="flex justify-between gap-4">
+              <span className="font-bold shrink-0">{link.platform}:</span>
               <a
                 href={link.url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="underline hover:no-underline"
+                className="underline hover:no-underline text-right break-all"
               >
                 {link.handle}
               </a>

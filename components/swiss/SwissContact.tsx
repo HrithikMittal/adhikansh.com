@@ -6,7 +6,7 @@ export default function SwissContact() {
       <div className="grid grid-cols-[200px_1fr] gap-10 items-start max-[820px]:grid-cols-1 max-[820px]:gap-[18px]">
         <div className="flex gap-3.5 items-start">
           <span className="font-mono text-[11px] text-[var(--muted)] uppercase tracking-wider leading-none">
-            § 04
+            § 05
           </span>
           <span className="font-mono text-[11px] text-[var(--muted)] leading-none">Contact</span>
         </div>

@@ -1,5 +1,9 @@
 @import "tailwindcss";
 
+/* Match next-themes (`attribute="data-theme"`). Default Tailwind `dark:` uses
+   prefers-color-scheme only, so OS dark + in-app light broke contrast on pills, etc. */
+@custom-variant dark (&:where([data-theme=dark], [data-theme=dark] *));
+
 /* Swiss Mode Theme Variables */
 :root {
   --bg: #fafaf7;
@@ -30,6 +34,17 @@ html,
 body {
   margin: 0;
   padding: 0;
+}
+
+/* Anchor jumps (nav #about, etc.): smooth scroll + offset for sticky header */
+html {
+  scroll-padding-top: 3.5rem; /* ~ SwissNav h-14 */
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
+  }
 }
 
 body {

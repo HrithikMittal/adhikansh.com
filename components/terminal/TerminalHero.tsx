@@ -12,30 +12,28 @@ export default function TerminalHero() {
         <br />
         <span className="text-[#ff6b4a]">&</span> {PERSONAL_INFO.name.split(" ")[1]}
       </div>
-      <div className="text-[clamp(14px,1.4vw,16px)] text-[#9c9c95] mt-4.5 max-w-[720px]">
-        <span className="text-[#e6e6e0] font-medium">{PERSONAL_INFO.tagline.split("building")[0]}</span>
-        <span className="text-[#ff6b4a]">building AI products</span>{" "}
-        <span className="text-[#e6e6e0] font-medium">from 0 to 1</span>
+      <p className="text-[11px] uppercase tracking-[0.14em] text-[#5b5b56] mb-2">{PERSONAL_INFO.primaryRole}</p>
+      <div className="text-[clamp(14px,1.4vw,16px)] text-[#9c9c95] mt-2 max-w-[720px] leading-relaxed">
+        {PERSONAL_INFO.tagline}
       </div>
 
-      {/* Meta grid */}
       <div className="grid grid-cols-4 md:grid-cols-2 gap-0 mt-7 border border-white/[0.08] rounded-md overflow-hidden">
         {[
-          { key: "Role", value: "Founder" },
+          { key: "Role", value: PERSONAL_INFO.primaryRole },
           { key: "Location", value: PERSONAL_INFO.location },
           { key: "Status", value: PERSONAL_INFO.status, live: true },
           { key: "Stack", value: "TS · PY · PG" },
-        ].map((item, i) => (
+        ].map((item) => (
           <div
             key={item.key}
             className={`px-3.5 py-3 border-r border-white/[0.08] last:border-r-0 md:nth-child(2n):border-r-0 md:nth-child(-n+2):border-b md:border-b-white/[0.08]`}
           >
             <div className="text-[10px] text-[#5b5b56] uppercase tracking-[0.12em]">{item.key}</div>
-            <div className="text-[13px] text-[#e6e6e0] mt-1 flex items-center gap-1.5">
+            <div className="text-[13px] text-[#e6e6e0] mt-1 flex items-center gap-1.5 leading-snug">
               {item.live && (
-                <span className="w-1.5 h-1.5 rounded-full bg-[#5be3a3] shadow-[0_0_0_0_rgba(91,227,163,0.5)] animate-pulse-dot inline-block" />
+                <span className="w-1.5 h-1.5 rounded-full bg-[#5be3a3] shadow-[0_0_0_0_rgba(91,227,163,0.5)] animate-pulse-dot inline-block shrink-0" />
               )}
-              {item.value}
+              <span className="min-w-0">{item.value}</span>
             </div>
           </div>
         ))}

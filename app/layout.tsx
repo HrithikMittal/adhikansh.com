@@ -23,13 +23,24 @@ const newsreader = Newsreader({
 });
 
 export const metadata: Metadata = {
-  title: "Adhikansh Mittal — Technical Founder",
-  description: "Technical founder building AI products from 0 to 1",
-  keywords: ["Adhikansh Mittal", "Technical Founder", "AI", "Coraltalk", "StayMod", "EatMod"],
+  title: "Adhikansh Mittal — Co-Founder & CTO, Coraltalk",
+  description:
+    "Co-Founder & CTO at Coraltalk (AI-powered spoken assessment; 10+ schools). Founder of Staymod and Eatmod. Bengaluru.",
+  keywords: [
+    "Adhikansh Mittal",
+    "Coraltalk",
+    "CTO",
+    "spoken assessment",
+    "Staymod",
+    "Eatmod",
+    "EdTech",
+    "AI",
+  ],
   authors: [{ name: "Adhikansh Mittal" }],
   openGraph: {
-    title: "Adhikansh Mittal — Technical Founder",
-    description: "Technical founder building AI products from 0 to 1",
+    title: "Adhikansh Mittal — Co-Founder & CTO, Coraltalk",
+    description:
+      "Co-Founder & CTO at Coraltalk. Side projects: Staymod & Eatmod in production. Notes on LinkedIn.",
     type: "profile",
   },
 };

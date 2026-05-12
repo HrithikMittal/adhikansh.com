@@ -1,5 +1,7 @@
 export interface PersonalInfo {
   name: string;
+  /** One line for hero / terminal meta (e.g. role + company). */
+  primaryRole: string;
   tagline: string;
   location: string;
   status: string;
@@ -7,6 +9,14 @@ export interface PersonalInfo {
   index: string;
   updated: string;
   baseLocation: string;
+}
+
+export type ProjectTier = "flagship" | "side";
+
+export interface ProofLink {
+  label: string;
+  /** Omit when the line is informational only (no public URL). */
+  url?: string;
 }
 
 export interface Project {
@@ -18,6 +28,9 @@ export interface Project {
   year: string;
   color: string;
   glyph: string;
+  tier: ProjectTier;
+  /** Customer or live product examples (shown in UI when set). */
+  proofLinks?: ProofLink[];
 }
 
 export interface SocialLink {
@@ -27,37 +40,76 @@ export interface SocialLink {
   icon?: string;
 }
 
-export interface Essay {
+export interface LinkedInPost {
+  title: string;
+  url: string;
+  /** Display date, e.g. 2026.05 */
+  date: string;
+}
+
+/** Long-form pieces you want listed under Writing (each links to Medium). */
+export interface MediumArticle {
+  id: string;
   title: string;
   subtitle: string;
   date: string;
-  slug: string;
   readTime: string;
+  url: string;
+}
+
+export interface LabIdea {
+  id: string;
+  /** Public-facing working title */
+  workingTitle: string;
+  description: string;
 }
 
 export const PERSONAL_INFO: PersonalInfo = {
   name: "Adhikansh Mittal",
-  tagline: "Technical founder building AI products from 0 → 1. I write code, ship features, and answer support tickets — usually the same week.",
+  primaryRole: "Co-Founder & CTO, Coraltalk",
+  tagline:
+    "Most of my time goes to Coraltalk - AI-powered spoken assessment used by 10+ schools. I still write code, ship releases, and answer support threads when it matters.",
   location: "Bengaluru, IN",
-  status: "Currently building Coraltalk",
+  status: "Coraltalk in market",
   email: "hi@adhikansh.com",
   index: "001 / 001",
-  updated: "10.05.26",
+  updated: "12.05.26",
   baseLocation: "Bengaluru, IN",
 };
 
+/** File in /public - used in About and metadata where needed. */
+export const PROFILE_IMAGE = "/adhikansh-profile.png";
+
+export const MEDIUM_PROFILE = {
+  url: "https://medium.com/@adhikanshmittal",
+  label: "Medium",
+  handle: "@adhikanshmittal",
+} as const;
+
+/** Short “now” line + CTA for LinkedIn-first publishing. */
+export const NOW = {
+  headline:
+    "Long-form posts here are paused. I’m publishing on LinkedIn twice a week - notes on building, education, and side ships.",
+  ctaLabel: "Follow on LinkedIn",
+  ctaUrl: "https://www.linkedin.com/in/adhikansh-mittal",
+} as const;
+
 export const ABOUT = {
-  headline: "Multidisciplinary technical founder. Comfortable in code, taste, and customer calls.",
+  headline:
+    "Technical founder who spends most cycles on one bet - and ships smaller products when I want a different kind of puzzle.",
   paragraphs: [
-    "I started Coraltalk after a decade of bouncing between engineering, product, and the messy in-between. Before that I co-founded StayMod and EatMod — turning hand-written specs into production systems and live customers.",
-    "I care about the parts of building that don't show up in case studies: the second iteration that nobody asks for, the dashboards you delete, the hire you should have made earlier. I work best with people who treat simplicity as the hardest design constraint.",
-    "If you're trying to take an idea from blank repo to first ten paying customers — or scale that work past the founder bottleneck — I'm a useful person to talk to.",
+    "I’m Co-Founder & CTO at Coraltalk, where we help schools verify real understanding with voice-first, rubric-aligned conversations - especially now that polished written work is easy to fake. Today more than ten schools run on the product, and that’s where my head and calendar live.",
+    "On the side I’m the founder of Staymod and Eatmod: fun builds for boutique hospitality and F&B that I tinker on when I want a break from the main quest. Both are in production - Staymod powers properties like Shangarh Retreat plus another hotel; Eatmod runs in the wild (including at Zostel Shangarh).",
+    "I like working with people who care about the unglamorous iteration: the dashboard you delete, the edge case in week six, the hire you wish you’d made earlier. If you’re going from blank repo to real users - or you’re stuck past the founder bottleneck - I’m usually a useful conversation.",
   ],
+  /** Short human signal; keep scannable. */
+  personal:
+    "Away from the keyboard: chess, PS5, cricket and football, painting, bartending, gardening - and a cat named Chillu.",
   stack: {
     stack: "TypeScript · Python · Postgres",
-    ai: "RAG · Agents · Evals",
+    ai: "Voice · Agents · RAG · Evals",
     cloud: "AWS · Cloudflare · Vercel",
-    comfortZone: "First 10 customers",
+    comfortZone: "First 10 schools · 0 → 1",
   },
 };
 
@@ -66,36 +118,115 @@ export const PROJECTS: Project[] = [
     id: "coraltalk",
     name: "Coraltalk",
     description:
-      "AI-powered conversation intelligence platform. From cold-start to first paying customers.",
+      "AI-powered spoken assessment for schools - oral exams, role-play, and explanation-based checks when written assignments stop being reliable evidence.",
     url: "https://coraltalk.com",
-    role: "Founder, Engineering",
-    year: "2024 — present",
+    role: "Co-Founder & CTO",
+    year: "2024 - present",
     color: "#e76f51",
     glyph: "C",
+    tier: "flagship",
   },
   {
     id: "staymod",
-    name: "StayMod",
+    name: "Staymod",
     description:
-      "Modular stay-management for boutique hospitality. Built the full stack from spec to scale.",
+      "Property and stay management for small hospitality teams - bookings, availability, and ops in one place. A boredom project that accidentally met real guests.",
     url: "https://staymod.in",
-    role: "Co-founder, Tech",
-    year: "2022 — present",
+    role: "Founder",
+    year: "2022 - present",
     color: "#2a4858",
     glyph: "S",
+    tier: "side",
+    proofLinks: [
+      { label: "Shangarh Retreat", url: "https://www.shangarhretreat.com/" },
+      { label: "+ 1 more boutique property (private)" },
+    ],
   },
   {
     id: "eatmod",
-    name: "EatMod",
+    name: "Eatmod",
     description:
-      "Smart kitchen operations and menu intelligence — built as the consumer-facing sister product.",
+      "F&B and kitchen-side tooling for stays and cafés - menus, orders, and ops adjacent to Staymod. Same itch: ship something small and watch it run in the real world.",
     url: "https://eatmod.in",
-    role: "Co-founder, Tech",
-    year: "2023 — present",
+    role: "Founder",
+    year: "2023 - present",
     color: "#5d6e1e",
     glyph: "E",
+    tier: "side",
+    proofLinks: [
+      {
+        label: "Zostel · Shangarh",
+        url: "https://www.zostel.com/destination/shangarh/stay/shangarh-kullu-shnh319",
+      },
+    ],
   },
 ];
+
+/** Flagship first, then side projects (stable sort for UI). */
+export const PROJECTS_ORDERED: Project[] = [
+  ...PROJECTS.filter((p) => p.tier === "flagship"),
+  ...PROJECTS.filter((p) => p.tier === "side"),
+];
+
+/** Curate after each LinkedIn post - no API required. */
+export const LINKEDIN_POSTS: LinkedInPost[] = [];
+
+/** Pipeline ideas - not shipped; names are working titles only. */
+export const LAB_IDEAS: LabIdea[] = [
+  {
+    id: "linkedin-fix",
+    workingTitle: "Signalcraft (working name)",
+    description:
+      "LinkedIn profile and post polish - stronger signal, less generic “thought leadership.” Exploring; no timeline.",
+  },
+  {
+    id: "resume",
+    workingTitle: "Roleproof (working name)",
+    description:
+      "Resume builder biased toward credibility and role fit, not keyword stuffing. Paper napkin stage.",
+  },
+  {
+    id: "bhakti",
+    workingTitle: "BhaktiPath (working name)",
+    description:
+      "Mobile experience around bhakti / devotion - calm daily ritual, not another feed. Idea only; open to collaborators with taste.",
+  },
+];
+
+/** Curated Medium stories - add rows here (no fetching). */
+export const MEDIUM_ARTICLES: MediumArticle[] = [
+  {
+    id: "flamingo-central-mapping-aff62c13136e",
+    title:
+      "Flamingo: The Central Mapping — Revolutionizing Our Annotation Process",
+    subtitle:
+      "Efficiency and speed are everything when it comes to data annotation and mapping. Let's start by clarifying what Data annotation really means and what I mean by mapping as well.",
+    date: "2024.06",
+    readTime: "7 min",
+    url: "https://medium.com/attentive-ai-engineering/flamingo-the-central-mapping-revolutionizing-our-annotation-process-aff62c13136e",
+  },
+  {
+    id: "what-is-redux-b1eac1b81ee1",
+    title: "What is Redux?",
+    subtitle:
+      "Hey everyone — I'm Adhikansh again. Here I explain what Redux is in theory, and how to reason about it before you dive in and create multiple reducers.",
+    date: "2019.09",
+    readTime: "5 min",
+    url: "https://medium.com/siam-vit/what-is-redux-b1eac1b81ee1",
+  },
+];
+
+/** Copy for the Writing section (Swiss + modes). */
+export const WRITING_SECTION = {
+  headlineBefore: "Notes on building, hiring, and the unromantic parts of",
+  headlineEm: " founder mode.",
+  headlineAfter: "",
+  highlightsEmpty:
+    "Standout posts will show up here as I curate them - for now everything new goes to LinkedIn first.",
+  archiveLabel: "MEDIUM ARCHIVE",
+  mediumBlurb:
+    "Featured Medium posts appear in the archive below when I curate them; the full archive is on my Medium profile.",
+} as const;
 
 export const SOCIAL_LINKS: SocialLink[] = [
   {
@@ -105,8 +236,13 @@ export const SOCIAL_LINKS: SocialLink[] = [
   },
   {
     platform: "LinkedIn",
-    url: "https://linkedin.com/in/adhikansh-mittal",
+    url: "https://www.linkedin.com/in/adhikansh-mittal",
     handle: "in/adhikansh-mittal",
+  },
+  {
+    platform: "Medium",
+    url: MEDIUM_PROFILE.url,
+    handle: MEDIUM_PROFILE.handle,
   },
   {
     platform: "GitHub",
@@ -124,52 +260,26 @@ export const SOCIAL_LINKS: SocialLink[] = [
     handle: "coraltalk.com",
   },
   {
-    platform: "StayMod",
+    platform: "Staymod",
     url: "https://staymod.in",
     handle: "staymod.in",
   },
-];
-
-export const ESSAYS: Essay[] = [
   {
-    title: "Shipping AI products from zero",
-    subtitle: "What 0→1 actually feels like when the model is the product.",
-    date: "2025.04",
-    slug: "shipping-ai-products-from-zero",
-    readTime: "8 MIN",
-  },
-  {
-    title: "Hiring engineer #1, honestly",
-    subtitle: "On signal, taste, and not pretending you have a culture yet.",
-    date: "2024.11",
-    slug: "hiring-engineer-1-honestly",
-    readTime: "5 MIN",
-  },
-  {
-    title: "The right amount of infrastructure",
-    subtitle: "How much platform should a five-person company own?",
-    date: "2024.07",
-    slug: "right-amount-of-infrastructure",
-    readTime: "6 MIN",
-  },
-  {
-    title: "Saying no to the demo",
-    subtitle: "Letting prospects feel the rough edges so they trust the polish.",
-    date: "2024.02",
-    slug: "saying-no-to-demo",
-    readTime: "4 MIN",
+    platform: "Eatmod",
+    url: "https://eatmod.in",
+    handle: "eatmod.in",
   },
 ];
 
 export const TICKER_ITEMS = [
-  "Sharp",
-  "Honest",
-  "Technical",
-  "0 → 1",
+  "Coraltalk",
+  "10+ schools",
+  "Spoken assessment",
+  "Staymod",
+  "Eatmod",
+  "Chess",
+  "Chillu",
   "Shipping",
-  "Founder mode",
-  "AI products",
 ];
 
-export const TERMINAL_TAGLINE =
-  "BOLD · CONFIDENT · SHIPPING";
+export const TERMINAL_TAGLINE = "BOLD · CONFIDENT · SHIPPING";

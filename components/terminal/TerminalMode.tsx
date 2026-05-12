@@ -4,6 +4,7 @@ import TerminalWindow from "./TerminalWindow";
 import TerminalHero from "./TerminalHero";
 import TerminalAbout from "./TerminalAbout";
 import TerminalProjects from "./TerminalProjects";
+import TerminalLab from "./TerminalLab";
 import TerminalWriting from "./TerminalWriting";
 import TerminalContact from "./TerminalContact";
 import TerminalStatusBar from "./TerminalStatusBar";
@@ -22,6 +23,7 @@ export default function TerminalMode() {
           <TerminalHero />
           <TerminalAbout />
           <TerminalProjects />
+          <TerminalLab />
           <TerminalWriting />
           <TerminalContact />
           <TerminalStatusBar />
