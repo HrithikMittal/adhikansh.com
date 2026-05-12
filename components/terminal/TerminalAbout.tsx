@@ -11,10 +11,11 @@ const stackLines = Object.entries(ABOUT.stack).map(([key, value]) => ({
 const prose = "text-[13px] leading-[1.65] text-[#e6e6e0] sm:text-[14px] max-w-[65ch]";
 const muted = "text-[13px] leading-[1.65] text-[#9c9c95] sm:text-[14px] max-w-[65ch]";
 
+/** Line gutter + numbers — lg+ only; below lg, content is full-width to avoid “terminal in terminal”. */
 function LineRow({ n, children }: { n: number; children: ReactNode }) {
   return (
-    <div className="grid grid-cols-[2.25rem_minmax(0,1fr)] items-start gap-x-3 py-1 sm:grid-cols-[2.5rem_minmax(0,1fr)] sm:gap-x-4">
-      <span className="select-none pt-0.5 text-right font-mono text-[11px] tabular-nums leading-[1.65] text-[#5b5b56]">
+    <div className="grid grid-cols-1 items-start gap-x-3 py-1 sm:gap-x-4 lg:grid-cols-[2.5rem_minmax(0,1fr)]">
+      <span className="hidden select-none pt-0.5 text-right font-mono text-[11px] tabular-nums leading-[1.65] text-[#5b5b56] lg:block">
         {n}
       </span>
       <div className="min-w-0">{children}</div>
@@ -26,7 +27,7 @@ export function TerminalAboutBody() {
   const stackStart = 6 + ABOUT.paragraphs.length;
 
   return (
-    <div className="rounded-lg border border-white/[0.08] bg-white/[0.015] px-4 py-5 sm:px-6 sm:py-6">
+    <div className="max-lg:py-0 lg:rounded-lg lg:border lg:border-white/[0.08] lg:bg-white/[0.015] lg:px-6 lg:py-6">
       <LineRow n={1}>
         <div className="leading-snug">
           <span className="text-[#a78bff]">#</span> <span className="text-[#ff6b4a]">About</span>
@@ -61,7 +62,7 @@ export function TerminalAboutBody() {
         </div>
       </LineRow>
 
-      <div className="pt-4">
+      <div className="max-lg:pt-3 lg:pt-4">
         <LineRow n={5 + ABOUT.paragraphs.length}>
           <span className="text-[13px] italic text-[#5b5b56] sm:text-[14px]">{"// Stack"}</span>
         </LineRow>
@@ -70,12 +71,12 @@ export function TerminalAboutBody() {
       {stackLines.map((line, i) => (
         <div
           key={line.key}
-          className="grid grid-cols-[2.25rem_6.75rem_minmax(0,1fr)] items-start gap-x-3 py-1 sm:grid-cols-[2.5rem_7.5rem_minmax(0,1fr)] sm:gap-x-4"
+          className="grid grid-cols-1 items-start gap-x-3 gap-y-0.5 py-1 sm:gap-x-4 lg:grid-cols-[2.5rem_7.5rem_minmax(0,1fr)]"
         >
-          <span className="select-none pt-0.5 text-right font-mono text-[11px] tabular-nums leading-[1.65] text-[#5b5b56]">
+          <span className="hidden select-none pt-0.5 text-right font-mono text-[11px] tabular-nums leading-[1.65] text-[#5b5b56] lg:block">
             {stackStart + i}
           </span>
-          <span className="break-words pt-0.5 text-right font-mono text-[12px] leading-[1.65] text-[#ffb454] sm:text-[13px]">
+          <span className="break-words pt-0.5 font-mono text-[12px] leading-[1.65] text-[#ffb454] sm:text-[13px] lg:text-right">
             {line.label}:
           </span>
           <span className={`min-w-0 break-words ${prose}`}>{line.value}</span>
@@ -87,7 +88,7 @@ export function TerminalAboutBody() {
 
 export default function TerminalAbout() {
   return (
-    <div className="mt-11">
+    <div className="mt-8 max-lg:mt-6 lg:mt-11">
       <div className="my-4.5 flex items-center gap-3 text-[11px] uppercase tracking-[0.14em] text-[#5b5b56]">
         <div className="h-px flex-1 bg-white/[0.08]" />
         <span className="text-[#ff6b4a]">01</span> About

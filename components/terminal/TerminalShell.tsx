@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useId, useRef, useState, type FormEvent, type ReactNode } from "react";
+import { useCallback, useEffect, useId, useRef, useState, type ChangeEvent, type FormEvent, type ReactNode } from "react";
 import { TerminalHeroBody } from "./TerminalHero";
 import { TerminalAboutBody } from "./TerminalAbout";
 import { TerminalProjectsBody } from "./TerminalProjects";
@@ -42,20 +42,56 @@ function HistoryCommandLine({ command }: { command: string }) {
   );
 }
 
+const HELP_COMMAND_ROWS: { cmd: string; desc: string }[] = [
+  { cmd: "whoami", desc: "intro & current focus" },
+  { cmd: "about", desc: "background & stack" },
+  { cmd: "projects", desc: "shipped work (aliases: ls, portfolio)" },
+  { cmd: "lab", desc: "ideas & experiments (alias: ideas)" },
+  { cmd: "writing", desc: "Medium archive only" },
+  { cmd: "contact", desc: "email & social (aliases: ping, mail)" },
+  {
+    cmd: "game",
+    desc: "fullscreen Pac-Man; exit saves the board to scrollback (alias: play)",
+  },
+  { cmd: "help", desc: "this list (aliases: ?, h)" },
+  { cmd: "clear", desc: "clear the screen" },
+];
+
 const HELP_OUTPUT = (
-  <pre className="m-0 whitespace-pre-wrap font-mono text-[12px] leading-relaxed text-[#9c9c95]">
-    {`Commands:
-  whoami      intro & current focus
-  about       background & stack
-  projects    shipped work (aliases: ls, portfolio)
-  lab         ideas & experiments (alias: ideas)
-  writing     Medium archive only
-  contact     email & social (aliases: ping, mail)
-  game        fullscreen Pac-Man; exit saves the board to scrollback (alias: play)
-  help        this list (aliases: ?, h)
-  clear       clear the screen`}
-  </pre>
+  <div className="m-0 max-w-full font-mono text-[12px] leading-relaxed text-[#9c9c95]">
+    <p className="mb-2.5 mt-0 text-[11px] font-medium uppercase tracking-wide text-[#7a7a72] sm:text-[12px]">
+      Commands
+    </p>
+    <ul className="m-0 list-none space-y-2.5 p-0 sm:space-y-2">
+      {HELP_COMMAND_ROWS.map((row) => (
+        <li
+          key={row.cmd}
+          className="grid max-w-full grid-cols-1 gap-x-4 gap-y-0.5 sm:grid-cols-[minmax(0,6.5rem)_minmax(0,1fr)] sm:items-start"
+        >
+          <span className="shrink-0 font-medium text-[#5be3a3]">{row.cmd}</span>
+          <span className="min-w-0 break-words text-[#b5b5ae]">{row.desc}</span>
+        </li>
+      ))}
+    </ul>
+    <p className="mb-0 mt-3 border-t border-white/[0.08] pt-2.5 text-[11px] leading-snug text-[#6b6b66]">
+      On smaller screens, use the command menu below the prompt instead of typing.
+    </p>
+  </div>
 );
+
+/** Shown in <select> below lg — values are sent as the shell command line. */
+const MOBILE_COMMAND_OPTIONS: { value: string; label: string }[] = [
+  { value: "help", label: "help — list commands" },
+  { value: "whoami", label: "whoami — intro & focus" },
+  { value: "about", label: "about — stack & background" },
+  { value: "projects", label: "projects — shipped work" },
+  { value: "lab", label: "lab — ideas & experiments" },
+  { value: "writing", label: "writing — Medium archive" },
+  { value: "contact", label: "contact — email & social" },
+  { value: "game", label: "game — Pac-Man (fullscreen)" },
+  { value: "clear", label: "clear — clear the screen" },
+  { value: "exit", label: "exit — mode tip" },
+];
 
 function normalizeCommand(raw: string): string {
   const t = raw.trim().toLowerCase();
@@ -76,6 +112,15 @@ function normalizeCommand(raw: string): string {
   if (aliases[first]) return aliases[first];
   if (first === "cat" && t.includes("about")) return "about";
   return first;
+}
+
+function focusShellControl(mobileSelect: HTMLSelectElement | null, input: HTMLInputElement | null) {
+  if (typeof window === "undefined") return;
+  if (window.matchMedia("(max-width: 1023px)").matches) {
+    mobileSelect?.focus();
+  } else {
+    input?.focus();
+  }
 }
 
 function renderOutput(raw: string): ReactNode {
@@ -125,6 +170,7 @@ export default function TerminalShell() {
   const [line, setLine] = useState("");
   const scrollRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+  const mobileSelectRef = useRef<HTMLSelectElement>(null);
   const preGameHistoryRef = useRef<HistoryEntry[]>([]);
 
   const finishGame = useCallback(
@@ -138,7 +184,7 @@ export default function TerminalShell() {
           output: <PacGameHistorySummary payload={payload} />,
         },
       ]);
-      queueMicrotask(() => inputRef.current?.focus());
+      queueMicrotask(() => focusShellControl(mobileSelectRef.current, inputRef.current));
     },
     [uid],
   );
@@ -155,28 +201,27 @@ export default function TerminalShell() {
   }, [history, scrollToBottom, gameOpen]);
 
   useEffect(() => {
-    inputRef.current?.focus();
+    queueMicrotask(() => focusShellControl(mobileSelectRef.current, inputRef.current));
   }, []);
 
-  const submit = useCallback(
-    (e: FormEvent) => {
-      e.preventDefault();
-      const raw = line;
+  const runCommand = useCallback(
+    (raw: string) => {
       const trimmed = raw.trim();
-      setLine("");
       if (!trimmed) return;
 
       const cmdKey = normalizeCommand(trimmed);
       if (cmdKey === "clear") {
         if (gameOpen) setGameOpen(false);
         setHistory([]);
-        queueMicrotask(() => inputRef.current?.focus());
+        queueMicrotask(() => focusShellControl(mobileSelectRef.current, inputRef.current));
         return;
       }
 
       if (cmdKey === "game") {
-        preGameHistoryRef.current = history;
-        setHistory([]);
+        setHistory((h) => {
+          preGameHistoryRef.current = h;
+          return [];
+        });
         setGameOpen(true);
         return;
       }
@@ -190,9 +235,29 @@ export default function TerminalShell() {
           output,
         },
       ]);
-      queueMicrotask(() => inputRef.current?.focus());
+      queueMicrotask(() => focusShellControl(mobileSelectRef.current, inputRef.current));
     },
-    [line, uid, gameOpen],
+    [uid, gameOpen],
+  );
+
+  const submit = useCallback(
+    (e: FormEvent) => {
+      e.preventDefault();
+      const trimmed = line.trim();
+      setLine("");
+      runCommand(trimmed);
+    },
+    [line, runCommand],
+  );
+
+  const onMobileCommandChange = useCallback(
+    (e: ChangeEvent<HTMLSelectElement>) => {
+      const value = e.target.value;
+      if (!value) return;
+      runCommand(value);
+      e.target.selectedIndex = 0;
+    },
+    [runCommand],
   );
 
   return (
@@ -222,12 +287,31 @@ export default function TerminalShell() {
             <label htmlFor="terminal-shell-input" className="sr-only">
               Terminal command
             </label>
-            <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-[13px]">
-              <span className="select-none text-[#5be3a3]">adhi</span>
-              <span className="select-none text-[#5b5b56]">@</span>
-              <span className="select-none text-[#a78bff]">coral</span>
-              <span className="select-none text-[#ff6b4a]">~</span>
-              <span className="select-none text-[#5b5b56]">$</span>
+            <div className="flex flex-col gap-2 lg:flex-row lg:flex-wrap lg:items-center lg:gap-x-2 lg:gap-y-1">
+              <div className="flex min-w-0 flex-wrap items-center gap-x-2 gap-y-1 text-[13px]">
+                <span className="select-none text-[#5be3a3]">adhi</span>
+                <span className="select-none text-[#5b5b56]">@</span>
+                <span className="select-none text-[#a78bff]">coral</span>
+                <span className="select-none text-[#ff6b4a]">~</span>
+                <span className="select-none text-[#5b5b56]">$</span>
+              </div>
+              <select
+                id="terminal-shell-mobile-commands"
+                ref={mobileSelectRef}
+                defaultValue=""
+                aria-label="Choose a terminal command"
+                onChange={onMobileCommandChange}
+                className="w-full min-w-0 rounded-md border border-white/[0.14] bg-[#101014] px-2.5 py-2.5 font-mono text-[13px] text-[#e6e6e0] outline-none lg:hidden"
+              >
+                <option value="" disabled>
+                  Choose a command…
+                </option>
+                {MOBILE_COMMAND_OPTIONS.map((opt) => (
+                  <option key={opt.value} value={opt.value}>
+                    {opt.label}
+                  </option>
+                ))}
+              </select>
               <input
                 id="terminal-shell-input"
                 ref={inputRef}
@@ -238,7 +322,7 @@ export default function TerminalShell() {
                 autoComplete="off"
                 autoCorrect="off"
                 spellCheck={false}
-                className="min-w-0 flex-1 bg-transparent font-mono text-[13px] text-[#e6e6e0] outline-none placeholder:text-[#5b5b56] sm:min-w-[12rem]"
+                className="hidden min-h-0 min-w-0 flex-1 bg-transparent font-mono text-[13px] text-[#e6e6e0] outline-none placeholder:text-[#5b5b56] lg:block lg:min-w-[12rem]"
                 placeholder="type a command…"
               />
             </div>

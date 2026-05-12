@@ -13,7 +13,7 @@ export default function TerminalModeToggle() {
 
   return (
     <div
-      className="flex max-w-[min(100%,380px)] shrink-0 flex-wrap items-center justify-end gap-1 rounded-md border border-white/[0.12] bg-black/55 px-1.5 py-1 sm:max-w-none sm:flex-nowrap sm:gap-1.5 sm:px-2"
+      className="flex max-w-none shrink-0 flex-nowrap items-center justify-end gap-1 rounded-md border border-white/[0.12] bg-black/55 px-1.5 py-1 sm:gap-1.5 sm:px-2"
       role="group"
       aria-label="Switch portfolio mode"
     >

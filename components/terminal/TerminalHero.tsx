@@ -1,7 +1,14 @@
-import { PERSONAL_INFO } from "@/constants/portfolio";
+import { ABOUT, PERSONAL_INFO } from "@/constants/portfolio";
 import Prompt from "./Prompt";
 
 export function TerminalHeroBody() {
+  const meta = [
+    { key: "Role", value: PERSONAL_INFO.primaryRole },
+    { key: "Location", value: PERSONAL_INFO.location },
+    { key: "Status", value: PERSONAL_INFO.status, live: true },
+    { key: "Stack", value: ABOUT.stack.stack },
+  ] as const;
+
   return (
     <>
       <div className="text-[clamp(34px,8vw,84px)] leading-none font-bold tracking-[-0.04em] my-5.5">
@@ -16,23 +23,15 @@ export function TerminalHeroBody() {
         {PERSONAL_INFO.tagline}
       </div>
 
-      <div className="grid grid-cols-4 md:grid-cols-2 gap-0 mt-7 border border-white/[0.08] rounded-md overflow-hidden">
-        {[
-          { key: "Role", value: PERSONAL_INFO.primaryRole },
-          { key: "Location", value: PERSONAL_INFO.location },
-          { key: "Status", value: PERSONAL_INFO.status, live: true },
-          { key: "Stack", value: "TS · PY · PG" },
-        ].map((item) => (
-          <div
-            key={item.key}
-            className={`px-3.5 py-3 border-r border-white/[0.08] last:border-r-0 md:nth-child(2n):border-r-0 md:nth-child(-n+2):border-b md:border-b-white/[0.08]`}
-          >
+      <div className="mt-7 grid grid-cols-1 gap-px overflow-hidden rounded-md border border-white/[0.1] bg-white/[0.1] sm:grid-cols-2 lg:grid-cols-4">
+        {meta.map((item) => (
+          <div key={item.key} className="min-w-0 bg-[#111116] px-3.5 py-3 sm:px-4 sm:py-3.5">
             <div className="text-[10px] text-[#5b5b56] uppercase tracking-[0.12em]">{item.key}</div>
-            <div className="text-[13px] text-[#e6e6e0] mt-1 flex items-center gap-1.5 leading-snug">
-              {item.live && (
-                <span className="w-1.5 h-1.5 rounded-full bg-[#5be3a3] shadow-[0_0_0_0_rgba(91,227,163,0.5)] animate-pulse-dot inline-block shrink-0" />
+            <div className="mt-1 flex items-start gap-1.5 text-[13px] leading-snug text-[#e6e6e0]">
+              {"live" in item && item.live && (
+                <span className="mt-1.5 inline-block h-1.5 w-1.5 shrink-0 animate-pulse-dot rounded-full bg-[#5be3a3] shadow-[0_0_0_0_rgba(91,227,163,0.5)]" />
               )}
-              <span className="min-w-0">{item.value}</span>
+              <span className="min-w-0 break-words">{item.value}</span>
             </div>
           </div>
         ))}
