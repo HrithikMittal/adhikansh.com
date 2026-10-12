@@ -1,0 +1,280 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<base href="/date/rishikesh-1/">
+<meta name="robots" content="noindex,nofollow">
+<title>Our Rishikesh Day 💌</title>
+<style>
+  :root{--ink:#4a2b3a;--pink:#ff6f9c;--pink-d:#e84f82;--cream:#fffaf5}
+  *{box-sizing:border-box}
+  html,body{margin:0;background:#0d0a14}
+  body{font-family:"Baloo 2","Nunito",ui-rounded,system-ui,sans-serif;color:var(--ink)}
+  .track{height:1000vh}
+  .stage{position:fixed;inset:0;overflow:hidden;background:#0d0a14}
+
+  /* painted scenes */
+  .scene{position:absolute;inset:-3%;background-size:cover;background-repeat:no-repeat;opacity:0;will-change:transform,opacity}
+  #s1{background-image:url(img/s1.jpg);background-position:68% 60%;opacity:1}
+  #s2{background-image:url(img/s2.jpg);background-position:50% 55%}
+  #s3{background-image:url(img/s3.jpg);background-position:50% 65%}
+  #s4{background-image:url(img/s4.jpg);background-position:50% 50%}
+  #s5{background-image:url(img/s5.jpg);background-position:50% 50%}
+
+  /* light & atmosphere */
+  .fx{position:absolute;inset:0;pointer-events:none}
+  #warm{background:radial-gradient(ellipse at 50% 55%,rgba(255,150,70,.55),rgba(255,90,90,.25) 45%,transparent 70%);mix-blend-mode:soft-light;opacity:0}
+  #dusk{background:linear-gradient(180deg,rgba(60,30,110,.5),rgba(255,120,80,.2));mix-blend-mode:multiply;opacity:0}
+  #tv{background:radial-gradient(ellipse at 52% 38%,rgba(150,200,255,.55),transparent 45%);mix-blend-mode:screen;opacity:0;animation:flick 1.4s infinite alternate}
+  @keyframes flick{from{filter:brightness(.8)}to{filter:brightness(1.3) hue-rotate(25deg)}}
+  #vig{background:radial-gradient(ellipse at center,transparent 55%,rgba(10,5,25,.55))}
+  #scrim{background:linear-gradient(0deg,rgba(10,5,25,.7),transparent 40%)}
+  #mist{background:
+    radial-gradient(ellipse 60% 30% at 20% 70%,rgba(255,255,255,.22),transparent),
+    radial-gradient(ellipse 50% 25% at 80% 60%,rgba(255,255,255,.18),transparent);
+    animation:mist 18s ease-in-out infinite alternate;opacity:.7;mix-blend-mode:screen}
+  @keyframes mist{to{transform:translateX(8%) scale(1.1)}}
+  #grain{opacity:.07;mix-blend-mode:overlay;
+    background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2'/></filter><rect width='160' height='160' filter='url(%23n)'/></svg>")}
+  #parts{position:absolute;inset:0;pointer-events:none;mix-blend-mode:screen}
+
+  /* UI */
+  #bar{position:fixed;top:0;left:0;height:4px;background:linear-gradient(90deg,#ff9db8,#ffd166);width:0;z-index:20}
+  #dots{position:fixed;right:14px;top:50%;transform:translateY(-50%);display:flex;flex-direction:column;gap:10px;z-index:20}
+  #dots i{width:9px;height:9px;border-radius:50%;background:#fff6;transition:.3s}
+  #dots i.on{background:#fff;transform:scale(1.5);box-shadow:0 0 10px #fff}
+  #cap{position:fixed;left:0;right:0;bottom:9%;text-align:center;z-index:15;pointer-events:none;color:#fff;padding:0 20px;
+    text-shadow:0 3px 18px rgba(0,0,0,.6);transition:opacity .5s,transform .5s}
+  #cap h2{margin:0;font:italic 700 clamp(30px,7vw,64px)/1.1 Georgia,"Times New Roman",serif;letter-spacing:.5px}
+  #cap p{margin:8px 0 0;font-size:clamp(15px,3.2vw,22px);opacity:.92;letter-spacing:.5px}
+  #cap.out{opacity:0;transform:translateY(14px)}
+  #hint{position:fixed;bottom:3%;left:0;right:0;text-align:center;color:#fff;font-weight:700;z-index:15;text-shadow:0 2px 10px #0009;animation:nudge 1.4s ease-in-out infinite;pointer-events:none}
+  @keyframes nudge{50%{transform:translateY(8px)}}
+  #intro{position:fixed;left:0;right:0;top:12%;text-align:center;color:#fff;z-index:15;pointer-events:none;text-shadow:0 3px 18px #0008;padding:0 20px}
+  #intro h1{font:italic 700 clamp(34px,8vw,72px)/1.05 Georgia,serif;margin:0}
+  #intro p{font-size:clamp(16px,3.4vw,22px);margin:10px 0 0}
+
+  #ask{position:fixed;inset:0;z-index:30;display:flex;align-items:center;justify-content:center;padding:16px;
+    background:rgba(15,8,35,.6);opacity:0;pointer-events:none;backdrop-filter:blur(6px)}
+  .card{background:rgba(255,250,245,.96);border-radius:28px;padding:26px 22px;max-width:460px;width:100%;text-align:center;
+    box-shadow:0 20px 70px rgba(255,111,156,.45);max-height:94vh;overflow:auto}
+  .emoji{font-size:62px;line-height:1;animation:bob 2s ease-in-out infinite}
+  @keyframes bob{50%{transform:translateY(-8px) rotate(4deg)}}
+  h1.q{font-size:27px;margin:8px 0 6px;line-height:1.2}
+  p{margin:6px 0 14px;font-size:18px}
+  .chips{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin:0 0 12px}
+  .chips span{background:#fff;border:2px solid #ffd3e0;border-radius:999px;padding:3px 11px;font-size:14px}
+  .btns{display:flex;gap:14px;justify-content:center;align-items:center;min-height:100px}
+  button,.cta{font:inherit;font-weight:700;border:0;border-radius:999px;cursor:pointer;transition:transform .2s}
+  #yes{background:var(--pink);color:#fff;padding:14px 30px;font-size:22px;box-shadow:0 6px 0 var(--pink-d)}
+  #yes:active{transform:translateY(4px)!important}
+  #no{background:#fff;color:var(--ink);border:2px solid #ffb3c9;padding:10px 22px;font-size:18px}
+  .prog{height:8px;background:#ffe0ea;border-radius:99px;overflow:hidden;margin:6px 0}
+  .prog i{display:block;height:100%;width:0;background:var(--pink);transition:width .4s}
+  .small{font-size:14px;opacity:.75;margin:4px 0}
+  .hidden{display:none!important}
+  .plan{background:#fff;border-radius:18px;padding:4px 14px;margin:12px 0;text-align:left}
+  .plan div{padding:8px 0;border-bottom:1px dashed #ffd3e0;font-size:16px}.plan div:last-child{border:0}
+  .cta{display:inline-block;background:#25d366;color:#fff;text-decoration:none;padding:13px 24px;font-size:18px;box-shadow:0 5px 0 #1aa34f}
+  canvas#confetti{position:fixed;inset:0;pointer-events:none;z-index:40}
+</style>
+</head>
+<body>
+<div id="bar"></div>
+<div id="dots"><i></i><i></i><i></i><i></i><i></i><i></i></div>
+<div id="intro"><h1>A day with you…</h1><p>Scroll slowly. It's a little story 💌</p></div>
+<div id="cap" class="out"></div>
+<div id="hint">Scroll ⬇️</div>
+<div class="track"></div>
+
+<div class="stage">
+  <div class="scene" id="s1"></div>
+  <div class="scene" id="s2"></div>
+  <div class="scene" id="s3"></div>
+  <div class="scene" id="s4"></div>
+  <div class="scene" id="s5"></div>
+  <div class="fx" id="warm"></div>
+  <div class="fx" id="dusk"></div>
+  <div class="fx" id="tv"></div>
+  <div class="fx" id="mist"></div>
+  <canvas id="parts"></canvas>
+  <div class="fx" id="vig"></div>
+  <div class="fx" id="scrim"></div>
+  <div class="fx" id="grain"></div>
+</div>
+
+<div id="ask">
+  <section class="card" id="q">
+    <div class="emoji" id="face">🥺</div>
+    <h1 class="q">So <span id="name">Babe</span>…</h1>
+    <p>Long drive, mountains, sunset, cooking &amp; a movie.<br><b>Rishikesh tomorrow?</b></p>
+    <div class="chips"><span>🚗 Drive</span><span>🏔️ Hills</span><span>🌅 Sunset</span><span>🍳 Cook</span><span>🎬 Movie</span></div>
+    <div class="btns" id="btns">
+      <button id="yes">Yes! 💖</button>
+      <button id="no">No</button>
+    </div>
+    <div class="prog"><i id="pb"></i></div>
+    <p class="small" id="hint2">Tap the big pink button 😌</p>
+  </section>
+
+  <section class="card hidden" id="done">
+    <div class="emoji">🥰</div>
+    <h1 class="q">YAAAY!! 🎉</h1>
+    <p>It's a date! Here's the plan:</p>
+    <div class="plan">
+      <div>📅 <b>Tomorrow</b> — pickup time: I'll text you</div>
+      <div>🚗 Long drive to Rishikesh, music on</div>
+      <div>🌅 Sunset by the Ganga</div>
+      <div>🍳 Cook dinner together</div>
+      <div>🎬 Movie + cuddles</div>
+    </div>
+    <a class="cta" id="wa" href="#">💬 Tell him you said YES</a>
+    <p class="small" style="margin-top:12px">I love you. Can't wait 💕</p>
+  </section>
+</div>
+<canvas id="confetti"></canvas>
+
+<script>
+  // ✏️ EDIT: her name
+  const NAME = "Babe";
+  const WHATSAPP = "918077510286";
+  const $ = id => document.getElementById(id);
+  $("name").textContent = NAME;
+
+  const clamp=(v,a=0,b=1)=>Math.min(b,Math.max(a,v));
+  const lerp=(a,b,t)=>a+(b-a)*t;
+  const ease=t=>t*t*(3-2*t);
+  const vis=(p,a,b,f)=>clamp(Math.min((p-a)/f,(b-p)/f));
+
+  // scenes: [start, end, scaleFrom, scaleTo, panFrom(%), panTo(%)]
+  const S=[
+    {el:$("s1"),a:0,   b:.20,s0:1.05,s1:1.22,x0:-1.5,x1:2.5},
+    {el:$("s2"),a:.20, b:.40,s0:1.0, s1:1.55,x0:0,   x1:0},     // big mountain zoom
+    {el:$("s3"),a:.40, b:.60,s0:1.05,s1:1.2, x0:1.5, x1:-1.5},
+    {el:$("s4"),a:.60, b:.78,s0:1.04,s1:1.2, x0:-1.5,x1:1.5},
+    {el:$("s5"),a:.78, b:.93,s0:1.04,s1:1.25,x0:0,   x1:0}
+  ];
+  const F=.045; // crossfade width
+
+  const caps=[
+    {a:.02,b:.19,t:"A long drive, just us",s:"windows down, our songs on 🚗"},
+    {a:.22,b:.39,t:"Into the mountains",s:"Rishikesh is calling 🏔️"},
+    {a:.42,b:.59,t:"Sunset by the Ganga",s:"golden hour, with you 🌅"},
+    {a:.62,b:.77,t:"Cooking together",s:"you stir, I chop 🍳"},
+    {a:.80,b:.92,t:"Movie night",s:"popcorn, blanket, cuddles 🎬"}
+  ];
+  const dots=[...document.querySelectorAll("#dots i")];
+  const chapterAt=[0,.2,.4,.6,.78,.93];
+
+  const warm=$("warm"),dusk=$("dusk"),tv=$("tv"),cap=$("cap"),ask=$("ask");
+  let lastCap=-2;
+
+  function update(){
+    const total=document.documentElement.scrollHeight-innerHeight;
+    const p=clamp(scrollY/total);
+    $("bar").style.width=p*100+"%";
+    $("hint").style.opacity=clamp(1-p*25);
+    $("intro").style.opacity=clamp(1-p*18);
+
+    S.forEach((sc,i)=>{
+      const t=clamp((p-(sc.a-F))/(sc.b-sc.a+2*F));
+      sc.el.style.transform=`scale(${lerp(sc.s0,sc.s1,t)}) translateX(${lerp(sc.x0,sc.x1,t)}%)`;
+      const o = i===0 ? 1-clamp((p-(sc.b-F))/(2*F)) : (i===S.length-1 ? clamp((p-(sc.a-F))/(2*F)) : vis(p,sc.a-F,sc.b+F,2*F));
+      sc.el.style.opacity=o;
+    });
+    // last scene stays until the end
+    if(p>S[4].a)S[4].el.style.opacity=clamp((p-(S[4].a-F))/(2*F));
+
+    // atmosphere
+    warm.style.opacity=vis(p,.34,.64,.08)*.9;
+    dusk.style.opacity=vis(p,.46,.66,.1)*.5;
+    tv.style.opacity=clamp((p-.8)/.05);
+
+    // captions
+    const ci=caps.findIndex(c=>p>=c.a&&p<c.b);
+    if(ci!==lastCap){
+      lastCap=ci;
+      cap.classList.add("out");
+      if(ci>=0)setTimeout(()=>{ if(lastCap===ci){cap.innerHTML=`<h2>${caps[ci].t}</h2><p>${caps[ci].s}</p>`;cap.classList.remove("out")}},180);
+    }
+    // chapter dots
+    let cd=0;chapterAt.forEach((v,i)=>{if(p>=v)cd=i});
+    dots.forEach((d,i)=>d.classList.toggle("on",i===cd));
+
+    // ask
+    const ao=clamp((p-.94)/.04);
+    ask.style.opacity=ao;
+    ask.style.pointerEvents=ao>.6?"auto":"none";
+    window.__p=p;
+  }
+  let tick=false;
+  addEventListener("scroll",()=>{if(!tick){tick=true;requestAnimationFrame(()=>{tick=false;update()})}},{passive:true});
+  addEventListener("resize",update);
+  update();
+
+  // ---- glowing particles (golden dust outdoors, hearts indoors) ----
+  const pc=$("parts"),px=pc.getContext("2d");
+  const psize=()=>{pc.width=innerWidth;pc.height=innerHeight};psize();addEventListener("resize",psize);
+  const P=Array.from({length:55},()=>({x:Math.random(),y:Math.random(),r:1+Math.random()*3,v:.0004+Math.random()*.0012,ph:Math.random()*6.28,h:Math.random()}));
+  function frame(t){
+    px.clearRect(0,0,pc.width,pc.height);
+    const p=window.__p||0, indoor=p>.6;
+    for(const q of P){
+      q.y-=q.v*(indoor?1.6:1); q.x+=Math.sin(t/1500+q.ph)*.0006;
+      if(q.y<-.05){q.y=1.05;q.x=Math.random()}
+      const x=q.x*pc.width,y=q.y*pc.height,a=.35+.35*Math.sin(t/600+q.ph);
+      px.globalAlpha=a;
+      if(indoor&&q.h>.55){
+        px.font=`${12+q.r*5}px serif`;px.fillText(q.h>.8?"💗":"✨",x,y);
+      }else{
+        const g=px.createRadialGradient(x,y,0,x,y,q.r*5);
+        g.addColorStop(0,p>.4?"rgba(255,200,140,1)":"rgba(255,245,200,1)");g.addColorStop(1,"rgba(255,220,160,0)");
+        px.fillStyle=g;px.beginPath();px.arc(x,y,q.r*5,0,6.28);px.fill();
+      }
+    }
+    requestAnimationFrame(frame);
+  }
+  requestAnimationFrame(frame);
+
+  // ---- ask logic ----
+  const yes=$("yes"),no=$("no");
+  const faces=["🥺","😢","😭","🥹","💔"];
+  const msgs=["Are you sure? 🥺","Pleaseee? 🥹","I'll make your favourite dish 🍝","The mountains are waiting 🏔️","Okay now it's tiny 😅","Just press Yes 💖"];
+  let tries=0;
+  function dodge(e){
+    e.preventDefault();tries++;
+    $("face").textContent=faces[tries%faces.length];
+    $("hint2").textContent=msgs[Math.min(tries-1,msgs.length-1)];
+    $("pb").style.width=Math.min(tries*18,100)+"%";
+    yes.style.transform=`scale(${Math.min(1+tries*.22,2.2)})`;
+    yes.style.margin=`0 ${Math.min(tries*14,60)}px`;
+    const w=$("btns").getBoundingClientRect().width;
+    no.style.transform=`translate(${(Math.random()-.5)*Math.max(w-140,0)}px,${(Math.random()-.5)*36}px) scale(${Math.max(1-tries*.15,.25)})`;
+    if(tries>=5)no.style.opacity=.3;
+  }
+  no.addEventListener("mouseenter",dodge);
+  no.addEventListener("touchstart",dodge,{passive:false});
+  no.addEventListener("click",dodge);
+  yes.addEventListener("click",()=>{$("q").classList.add("hidden");$("done").classList.remove("hidden");boom()});
+  $("wa").addEventListener("click",e=>{
+    e.preventDefault();
+    location.href=`https://wa.me/${WHATSAPP}?text=${encodeURIComponent("I said YES!! 🥰 Long drive, mountains, sunset, cooking & a movie - Rishikesh here we come! 🏔️💕")}`;
+  });
+
+  // confetti
+  const cv=$("confetti"),cx=cv.getContext("2d");
+  const size=()=>{cv.width=innerWidth;cv.height=innerHeight};size();addEventListener("resize",size);
+  function boom(){
+    const cols=["#ff6f9c","#ffd166","#7bdff2","#b8f2a8","#c9a7ff","#fff"];
+    const ps=Array.from({length:220},()=>({x:innerWidth/2,y:innerHeight/2.2,vx:(Math.random()-.5)*18,vy:Math.random()*-17-2,r:4+Math.random()*6,c:cols[Math.random()*cols.length|0],a:1}));
+    (function f(){
+      cx.clearRect(0,0,cv.width,cv.height);let alive=false;
+      for(const p of ps){p.vy+=.35;p.x+=p.vx;p.y+=p.vy;p.a-=.006;
+        if(p.a>0){alive=true;cx.globalAlpha=p.a;cx.fillStyle=p.c;cx.fillRect(p.x,p.y,p.r,p.r*1.6)}}
+      alive?requestAnimationFrame(f):cx.clearRect(0,0,cv.width,cv.height);
+    })();
+  }
+</script>
+</body>
+</html>
